@@ -16,7 +16,7 @@ class GettyScraper
     path = sprintf('%06d', id.to_i) + '01.jpg'
     link = "http://d2hiq5kf5j4p5h.cloudfront.net/#{path}"
     puts "Getting Image at #{link}" # , number #{index} of #{ids.length}"
-    return @agent.get(link) #.save "g-images/#{id}.jpg"
+    return @agent.get(link)
   end
 
   def save_image( mechanize_image, path )
@@ -24,10 +24,9 @@ class GettyScraper
   end
 
   def load_info( id )
-    begin
-      link = "http://search.getty.edu/museum/records/musobject?objectid=#{id}"
-      puts "Getting Info for #{id}"
-      page = @agent.get link
+    link = "http://search.getty.edu/museum/records/musobject?objectid=#{id}"
+    puts "Getting Info for #{id}"
+    page = @agent.get link
     rescue Exception => e
       puts e
     else
@@ -38,7 +37,6 @@ class GettyScraper
       end
       data["ID"] = "#{id}"
       return data
-    end
   end
 
 end

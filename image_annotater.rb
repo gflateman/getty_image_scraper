@@ -14,7 +14,7 @@ class ImageAnnotater
   BASE_HEIGHT_OFFSET = (SCREEN_HEIGHT / 2 ) - PADDING_Y
   BASE_WIDTH_OFFSET = -1 * ((SCREEN_WIDTH / 2) - PADDING_X)
 
-  def initialize()
+  def initialize
     @draw = Draw.new
   end
 
@@ -48,9 +48,7 @@ class ImageAnnotater
 
   def format_text( info_hash )
     text = ""
-    info_hash.each do |k,v|
-      text << format_info_line(k,v)
-    end
+    info_hash.each{ |k,v| text << format_info_line(k,v) }
     return text
   end
 
@@ -60,18 +58,17 @@ class ImageAnnotater
     text = format_text(info_hash)
     scale = scale_factor(image)
 
-    width_offset = scale * BASE_WIDTH_OFFSET
-    height_offset = scale * BASE_HEIGHT_OFFSET
+    width_offset = (width(image)/2) + (scale * BASE_WIDTH_OFFSET)
+    height_offset = (height(image)/2) + (scale * BASE_HEIGHT_OFFSET)
 
-    annotated_image = image.annotate(@draw, 0, 0, (width(image)/2) + width_offset, (height(image)/2) + height_offset, text) {
+    annotated_image = image.annotate(@draw, 0, 0, width_offset, height_offset, text) {
       self.align = LeftAlign
       self.font_weight = BoldWeight
       self.pointsize = 32
       self.font_family = 'Helvetica'
       self.fill = 'white'
-      self.stroke = '#000000'
+      self.stroke = 'black'
     }
-    return annotated_image
   end
 
 end
