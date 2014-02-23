@@ -14,54 +14,56 @@ class ImageAnnotater
   BASE_HEIGHT_OFFSET = (SCREEN_HEIGHT / 2 ) - PADDING_Y
   BASE_WIDTH_OFFSET = -1 * ((SCREEN_WIDTH / 2) - PADDING_X)
 
-  def initialize(image_path, info_hash)
+  def initialize()
     @draw = Draw.new
-    @image = Image.read(image_path).first
-    @text = self.format_text(info_hash)
   end
 
-  def width
-    @image.columns.to_f # width px
+  def width( image )
+    image.columns.to_f # width px
   end
 
-  def height
-    @image.rows.to_f #height in px
+  def height( image )
+    image.rows.to_f #height in px
   end
 
-  def dimension_ratio
-    self.height / self.width
+  def dimension_ratio( image )
+    height(image) / width(image)
   end
 
-  def scale_factor
-    if self.dimension_ratio < SCREEN_DIMENSION_RATIO
+  def scale_factor( image )
+    if dimension_ratio(image) < SCREEN_DIMENSION_RATIO
       # landscape
-      return (self.height / SCREEN_HEIGHT).to_f
+      return (height(image) / SCREEN_HEIGHT).to_f
     else
       # portrait
-      return (self.width / SCREEN_WIDTH).to_f
+      return (width(image) / SCREEN_WIDTH).to_f
     end
   end
 
-  def format_info_line(k,v)
+  def format_info_line( k,v )
     return '' if k.to_s.downcase.match('dimensions')
     return "#{k}: #{v.upcase}\n" if k.to_s.match("ID")
     return "#{v.upcase}\n"
   end
 
-  def format_text(info_hash)
+  def format_text( info_hash )
     text = ""
     info_hash.each do |k,v|
-      text << self.format_info_line(k,v)
+      text << format_info_line(k,v)
     end
     return text
   end
 
-  def annotate
+  def annotate( image_path, info_hash )
 
-    width_offset = self.scale_factor * BASE_WIDTH_OFFSET
-    height_offset = self.scale_factor * BASE_HEIGHT_OFFSET
+    image = Image.read(image_path).first
+    text = format_text(info_hash)
+    scale = scale_factor(image)
 
-    annotated_image = @image.annotate(@draw, 0, 0, (self.width/2) + width_offset, (self.height/2) + height_offset, @text) {
+    width_offset = scale * BASE_WIDTH_OFFSET
+    height_offset = scale * BASE_HEIGHT_OFFSET
+
+    annotated_image = image.annotate(@draw, 0, 0, (width(image)/2) + width_offset, (height(image)/2) + height_offset, text) {
       self.align = LeftAlign
       self.font_weight = BoldWeight
       self.pointsize = 32

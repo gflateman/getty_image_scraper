@@ -32,11 +32,11 @@ class GettyScraper
       puts e
     else
       data = {}
-      data["title"] = page.search("#cs-results-a h1").text.strip.to_s
+      data["title"] = page.search("#cs-results-a h1").text.strip
       page.search('.cs-result-data.cs-result-data-brief tr').each do |tr|
-        data[tr.search('.cs-label p').text.strip.to_s] = tr.search('.cs-value p').text.strip.to_s
+        data[tr.search('.cs-label p').text.strip] = tr.search('.cs-value p').text.strip
       end
-      data["ID"] = "#{id.to_s}"
+      data["ID"] = "#{id}"
       return data
     end
   end
